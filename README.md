@@ -1,5 +1,7 @@
 # RubyBranch
 
+[![Build Status](https://travis-ci.org/hello-baby/ruby_branch.svg?branch=master)](https://travis-ci.org/hello-baby/ruby_branch)
+
 Ruby client for https://branch.io API
 
 ## Installation
