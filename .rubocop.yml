@@ -1,0 +1,57 @@
+AllCops:
+  TargetRubyVersion: 2.1
+  Exclude:
+    - 'lib/ruby_branch/utils/to_query.rb'
+    - 'ruby_branch.gemspec'
+    - 'vendor/**/*'
+
+Metrics/LineLength:
+  Max: 120
+  Exclude:
+
+Metrics/MethodLength:
+  Max: 30
+
+Metrics/BlockLength:
+  CountComments: false
+  Max: 12
+  Exclude:
+    - 'spec/**/*.rb'
+
+Metrics/AbcSize:
+  Max: 20
+
+ClassAndModuleChildren:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Layout/MultilineMethodCallIndentation:
+  Enabled: true
+  EnforcedStyle: indented
+
+Layout/MultilineOperationIndentation:
+  Enabled: true
+  EnforcedStyle: indented
+
+Layout/MultilineHashBraceLayout:
+  Enabled: true
+  EnforcedStyle: symmetrical
+
+Layout/MultilineArrayBraceLayout:
+  Enabled: true
+  EnforcedStyle: symmetrical
+
+Style/NumericLiterals:
+  Enabled: false
+
+Layout/EmptyLinesAroundClassBody:
+  Enabled: true
+  EnforcedStyle: empty_lines
+
+Layout/AlignParameters:
+  EnforcedStyle: with_fixed_indentation
+
+Style/PredicateName:
+  Enabled: false
