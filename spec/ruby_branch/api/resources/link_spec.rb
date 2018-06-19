@@ -10,6 +10,7 @@ RSpec.describe RubyBranch::API::Resources::Link do
   let(:data_sample) do
     {
       feature: :join_to_story,
+      '$og_description' => "Join Jonh's story!",
       story_id: 1
     }
   end
@@ -44,6 +45,15 @@ RSpec.describe RubyBranch::API::Resources::Link do
     end
   end
 
+  describe '#update_safely' do
+    let(:branch_url) { 'http://mydomain.app.link/cedk/welkrje' }
+
+    it 'works' do
+      expect(link).to receive(:build)
+      link.update_safely(url: branch_url, analytics: analytics_sample, data: data_sample)
+    end
+  end
+
   describe '#build' do
     it 'constructs branch link' do
       resulted_link = link.build(analytics: analytics_sample, data: data_sample)
@@ -68,19 +78,41 @@ RSpec.describe RubyBranch::API::Resources::Link do
   describe '#create' do
     it 'returns link' do
       branch_url = 'http://mydomain.app.link/cedk/welkrje'
-      stub_request_to_branch_to_return_url(branch_url)
+      stub_create_request_to_branch_to_return_url(branch_url)
       resulted_link = link.create(analytics: analytics_sample, data: data_sample)
       expect(resulted_link).to eq(branch_url)
     end
 
     context 'branch is down' do
       before do
-        stub_request_to_branch_to_return_502_error
+        stub_create_request_to_branch_to_return_502_error
       end
 
       it 'returns root url' do
         resulted_link = link.create
         expect(resulted_link).to eq RubyBranch.config.link_to_homepage
+      end
+    end
+  end
+
+  describe '#update' do
+    let(:branch_url) { 'http://mydomain.app.link/cedk/welkrje' }
+
+    it 'returns true' do
+      stub_update_request_to_branch_to_return_url(branch_url)
+      data_sample['$og_description'] = "Join Sam's story"
+      result = link.update(url: branch_url, analytics: analytics_sample, data: data_sample)
+      expect(result).to eq(true)
+    end
+
+    context 'branch is down' do
+      before do
+        stub_update_request_to_branch_to_return_502_error
+      end
+
+      it 'returns false' do
+        result = link.update(url: branch_url)
+        expect(result).to eq false
       end
     end
   end
@@ -120,13 +152,23 @@ RSpec.describe RubyBranch::API::Resources::Link do
     @parsed_link ||= URI.parse(link)
   end
 
-  def stub_request_to_branch_to_return_url(url)
+  def stub_create_request_to_branch_to_return_url(url)
     stub_request(:post, %r{#{RubyBranch::BRANCH_API_ENDPOINT}\/*})
       .to_return(status: [200], body: "{\"url\":\"#{url}\"}")
   end
 
-  def stub_request_to_branch_to_return_502_error
+  def stub_update_request_to_branch_to_return_url(url)
+    stub_request(:put, %r{#{RubyBranch::BRANCH_API_ENDPOINT}\/*})
+      .to_return(status: [200], body: "{\"url\":\"#{url}\"}")
+  end
+
+  def stub_create_request_to_branch_to_return_502_error
     stub_request(:post, %r{#{RubyBranch::BRANCH_API_ENDPOINT}\/*})
+      .to_return(status: [502, 'Bad Gateway'])
+  end
+
+  def stub_update_request_to_branch_to_return_502_error
+    stub_request(:put, %r{#{RubyBranch::BRANCH_API_ENDPOINT}\/*})
       .to_return(status: [502, 'Bad Gateway'])
   end
 end

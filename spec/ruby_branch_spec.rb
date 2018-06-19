@@ -9,6 +9,7 @@ RSpec.describe RubyBranch do
     before :each do
       RubyBranch.configure do |config|
         config.api_key = 'api_key'
+        config.secret_key = 'secret_key'
         config.branch_domain = 'branch_domain'
         config.link_to_homepage = 'https://mydomain.com'
       end
@@ -16,6 +17,7 @@ RSpec.describe RubyBranch do
 
     it 'returns configuration options' do
       expect(RubyBranch.config.api_key).to eq('api_key')
+      expect(RubyBranch.config.secret_key).to eq('secret_key')
       expect(RubyBranch.config.branch_domain).to eq('branch_domain')
       expect(RubyBranch.config.link_to_homepage).to eq('https://mydomain.com')
     end
