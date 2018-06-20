@@ -26,6 +26,7 @@ Configuration:
 
     RubyBranch.configure do |config|
       config.api_key = 'YOUR_API_KEY'
+      config.secret_key = 'YOUR_SECRET_KEY'
       config.branch_domain = 'YOUR_BRANCH_DOMAIN'
       # for fallback in case link creation has been failed
       config.link_to_homepage = 'https://yourdomain.com' # optional
@@ -42,6 +43,12 @@ Methods:
 
     # Create link through branch api
     link.create(analytics: {}, data: {}, settings: {})
+
+    # Update existing link without api forcing
+    link.update_safely(url: url, analytics: {}, data: {}, settings: {})
+
+    # Update existing link through branch api
+    link.update(url: url, analytics: {}, data: {}, settings: {})
 
 ## Development
 
