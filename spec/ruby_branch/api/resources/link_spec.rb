@@ -117,6 +117,27 @@ RSpec.describe RubyBranch::API::Resources::Link do
     end
   end
 
+  describe '#delete' do
+    let(:branch_url) { 'http://mydomain.app.link/cedk/welkrje' }
+
+    it 'returns true' do
+      stub_delete_request_to_branch_to_return_url(branch_url)
+      result = link.delete(url: branch_url)
+      expect(result).to eq(true)
+    end
+
+    context 'branch is down' do
+      before do
+        stub_delete_request_to_branch_to_return_502_error
+      end
+
+      it 'returns false' do
+        result = link.delete(url: branch_url)
+        expect(result).to eq false
+      end
+    end
+  end
+
   def expect_link_includes_domain_and_path(link)
     parse_link(link)
     expect(@parsed_link.scheme).to eq 'https'
@@ -162,6 +183,11 @@ RSpec.describe RubyBranch::API::Resources::Link do
       .to_return(status: [200], body: "{\"url\":\"#{url}\"}")
   end
 
+  def stub_delete_request_to_branch_to_return_url(url)
+    stub_request(:delete, %r{#{RubyBranch::BRANCH_API_ENDPOINT}\/*})
+      .to_return(status: [200], body: "{\"url\":\"#{url}\",\"deleted\":true}")
+  end
+
   def stub_create_request_to_branch_to_return_502_error
     stub_request(:post, %r{#{RubyBranch::BRANCH_API_ENDPOINT}\/*})
       .to_return(status: [502, 'Bad Gateway'])
@@ -169,6 +195,11 @@ RSpec.describe RubyBranch::API::Resources::Link do
 
   def stub_update_request_to_branch_to_return_502_error
     stub_request(:put, %r{#{RubyBranch::BRANCH_API_ENDPOINT}\/*})
+      .to_return(status: [502, 'Bad Gateway'])
+  end
+
+  def stub_delete_request_to_branch_to_return_502_error
+    stub_request(:delete, %r{#{RubyBranch::BRANCH_API_ENDPOINT}\/*})
       .to_return(status: [502, 'Bad Gateway'])
   end
 end
