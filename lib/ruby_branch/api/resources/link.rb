@@ -38,6 +38,15 @@ module RubyBranch
           false
         end
 
+        def delete(url:)
+          response = do_delete_request(url)
+
+          return true if response.success?
+
+          process_error(response)
+          false
+        end
+
         def build(analytics: {}, data: {}, settings: {})
           params = {}
           params.merge!(prepare_analytics(analytics))
@@ -64,6 +73,11 @@ module RubyBranch
         def do_update_request(url, request_body)
           request = Request.new
           request.put("v1/url?url=#{url}", request_body.to_json)
+        end
+
+        def do_delete_request(url)
+          request = Request.new
+          request.delete("v1/url?url=#{url}")
         end
 
         def build_request_body(analytics, settings, data)

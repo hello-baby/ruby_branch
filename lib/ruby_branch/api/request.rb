@@ -20,6 +20,14 @@ module RubyBranch
         Response.new(response)
       end
 
+      def delete(resource)
+        response = connection.delete do |request|
+          request.url resource
+          request.headers['Content-Type'] = 'application/json'
+        end
+        Response.new(response)
+      end
+
       def connection
         @connection ||=
           Faraday.new(url: BRANCH_API_ENDPOINT) do |connection|
