@@ -107,9 +107,7 @@ module RubyBranch
 
         def process_error(response)
           error_attrs = { status: response.status, body: response.body }
-          if defined?(Bugsnag) && defined?(Rails) && Rails.env.production?
-            Bugsnag.notify(Errors::ApiResponseError.new, error_attrs)
-          end
+          Errbase.report(Errors::ApiResponseError.new, error_attrs)
         end
 
       end
